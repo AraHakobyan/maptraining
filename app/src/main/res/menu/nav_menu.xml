@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_google_maps"
+            android:icon="@drawable/google_maps"
+            android:title="@string/simple_map" />
+        <item
+            android:id="@+id/navigation_item_heat_map_layers"
+            android:icon="@drawable/heat_map_layers"
+            android:title="@string/heat_map_layers" />
+        <item
+            android:id="@+id/navigation_item_heat_mind_map"
+            android:icon="@drawable/heat_mind_map"
+            android:title="@string/heat_mind_map" />
+        <item
+            android:id="@+id/stackoverflow"
+            android:icon="@drawable/common_full_open_on_phone"
+            android:title="Stackoverflow" />
+
+    </group>
+</menu>

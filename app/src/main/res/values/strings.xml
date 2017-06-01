@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Minasyan Location</string>
+    <string name="heat_map_layers">Layerd Map</string>
+    <string name="simple_map">Map</string>
+    <string name="heat_mind_map">Mind Map</string>
+    <string name="api_key">AIzaSyCWQ0Zr2Lfh6RB3Z9c7iGlli0_5uI95D04</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+</resources>

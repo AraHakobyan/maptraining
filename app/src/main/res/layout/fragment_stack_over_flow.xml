@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    style="@style/MyStyle"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context="com.example.aro_pc.heatmapongoogle.stackoverflow.StackOverFlow">
+
+    <android.support.v7.widget.AppCompatRatingBar
+        android:layout_gravity="center"
+        android:id="@+id/ratingBar"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:progressTint="#0fff00"
+        android:rating="3.0"
+        android:secondaryProgressTint="#54f4ff"
+        android:progressBackgroundTint="@android:color/background_dark"
+        android:stepSize="0.1"
+        android:isIndicator="false"/>
+
+    <ImageSwitcher
+
+        android:id="@+id/image_switcher"
+        android:background="@color/colorPrimaryDark"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="50dp"
+        android:layout_height="50dp"></ImageSwitcher>
+
+    <TextView
+
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/tv1"
+        android:lines="1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/tv2"
+        android:lines="1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:track="@drawable/google_maps"
+        android:thumb="@drawable/heat_mind_map"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</FrameLayout>
