@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.example.aro_pc.heatmapongoogle.background.BackgroundMainActivity;
 import com.example.aro_pc.heatmapongoogle.fragments.FragmentGoogleMap;
@@ -22,6 +22,7 @@ import com.example.aro_pc.heatmapongoogle.fragments.FragmentLayerdMap;
 import com.example.aro_pc.heatmapongoogle.fragments.FragmentMindMap;
 import com.example.aro_pc.heatmapongoogle.stackoverflow.StackOverFlow;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.konifar.fab_transformation.FabTransformation;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private StackOverFlow fragmentStackOverFlow;
     private DrawerLayout drawer;
+    FrameLayout frameLayout;
+    FloatingActionButton fab;
 
 
     @Override
@@ -43,12 +46,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        frameLayout = (FrameLayout) findViewById(R.id.frame);
+
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                FabTransformation.with(fab).duration(100).transformTo(frameLayout);
+                isFabShow = false;
             }
         });
 
@@ -67,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentMindMap = FragmentMindMap.getInstance();
         fragmentStackOverFlow = StackOverFlow.getInstance();
         fragmentStackOverFlow.setContext(getApplicationContext());
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container, fragmentLayerdMap).commit();
+
 
     }
 
@@ -77,20 +87,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         switch (id) {
             case R.id.navigation_item_google_maps:
+                if (!isFabShow) hideFab();
                 fragmentManager.beginTransaction().replace(R.id.fragment_map_container, fragmentGoogleMap).commit();
-
                 break;
-
             case R.id.navigation_item_heat_map_layers:
+                if (!isFabShow) hideFab();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container, fragmentLayerdMap).commit();
-
                 break;
             case R.id.navigation_item_heat_mind_map:
+                if (!isFabShow) hideFab();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container, fragmentMindMap).commit();
                 break;
             case R.id.stackoverflow:
-//               getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container,fragmentStackOverFlow).commit();
-//               startActivity(new Intent(this,OpenGlActivity.class));
+                if (!isFabShow) hideFab();
                 startActivity(new Intent(this, BackgroundMainActivity.class));
                 break;
         }
@@ -104,17 +113,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     PolygonOptions polygonOptions;
 
+    private boolean isFabShow = true;
 
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            if (isFabShow)
             super.onBackPressed();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container, fragmentLayerdMap).commit();
+        if(!isFabShow){
+            hideFab();
+            isFabShow = true;
+
+        }
+
+    }
+
+    private void hideFab(){
+        FabTransformation.with(fab).duration(100).transformFrom(frameLayout);
     }
 
 }

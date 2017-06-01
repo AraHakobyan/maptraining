@@ -1,10 +1,7 @@
 package com.example.aro_pc.heatmapongoogle.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +14,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -74,33 +72,33 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     CameraPosition cameraPosition;
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
+    public void onMapReady(GoogleMap map) {
+        this.googleMap = map;
         googleMap.setOnMapClickListener(this);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        googleMap.setMyLocationEnabled(true);
+//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        googleMap.setMyLocationEnabled(true);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         tileOverlay = googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-        LatLng sydney = new LatLng(-33.852, 151.211);
+        LatLng sydney = new LatLng(40.1792, 44.4991);
         googleMap.addMarker(new MarkerOptions().position(sydney)
                 .title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
         googleMap.setOnMyLocationChangeListener(this);
-
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity().getApplicationContext(),R.raw.map_white_stile));
 
         cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(-33.852, 151.211))      // Sets the center of the map to Mountain View
+                .target(new LatLng(40.1792, 44.4991))      // Sets the center of the map to Mountain View
                 .zoom(17)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
@@ -119,6 +117,14 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onMapClick(LatLng latLng) {
 
+        if(cameraPosition == null){
+            cameraPosition = new CameraPosition.Builder()
+                    .target(latLng)
+                    .zoom(17)
+                    .bearing(90)
+                    .tilt(30)
+                    .build();
+        }
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
@@ -126,7 +132,7 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onMyLocationChange(Location location) {
         float bearing = location.getBearing() + 30;
-         CameraPosition cameraPosition = new CameraPosition.Builder()
+           cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to Mountain View
                 .zoom(17)                   // Sets the zoom
                 .bearing(bearing)                // Sets the orientation of the camera to east

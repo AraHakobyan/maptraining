@@ -277,12 +277,14 @@ public class FragmentGoogleMap extends Fragment implements OnMapReadyCallback, G
     }
 
     private void drawRoad(LatLng latLng){
-        String url = getUrl(latLng1, latLng);
-        Log.d("onMapClick", url.toString());
-        FetchUrl FetchUrl = new FetchUrl();
+        if(latLng1 != null){
+            String url = getUrl(latLng1, latLng);
+            Log.d("onMapClick", url.toString());
+            FetchUrl FetchUrl = new FetchUrl();
 
-        // Start downloading json data from Google Directions API
-        FetchUrl.execute(url);
+            // Start downloading json data from Google Directions API
+            FetchUrl.execute(url);
+        }
         latLng1 = latLng;
 
     }
@@ -549,5 +551,4 @@ public class FragmentGoogleMap extends Fragment implements OnMapReadyCallback, G
             return poly;
         }
     }
-
 }

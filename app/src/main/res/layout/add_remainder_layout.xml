@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:orientation="vertical"
+             android:id="@+id/frame"
+             android:background="@color/grey_50"
+             android:layout_marginTop="?attr/actionBarSize"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:padding="16dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/distance_from_location"
+                    android:text="Distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+
+                    android:textCursorDrawable="@null"
+                    app:met_primaryColor="@color/colorPrimary"
+                    android:hint="1500"
+                    app:met_maxCharacters="5"
+                    app:met_minCharacters="3"
+                    app:met_helperText="with meters"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+
+                    android:textCursorDrawable="@null"
+                    app:met_primaryColor="@color/colorPrimary"
+                    android:hint="1500"
+                    app:met_maxCharacters="5"
+                    app:met_minCharacters="3"
+                    app:met_helperText="with meters"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+
+            </LinearLayout><LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:text="Distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+
+                android:textCursorDrawable="@null"
+                app:met_primaryColor="@color/colorPrimary"
+                android:hint="1500"
+                app:met_maxCharacters="5"
+                app:met_minCharacters="3"
+                app:met_helperText="with meters"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+
+        </LinearLayout>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                app:met_primaryColor="@color/colorPrimary"
+                android:textCursorDrawable="@null"
+                android:layout_marginTop="20dp"
+                android:hint="Description"
+                android:gravity="start"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"/>
+
+            <TextView
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:text="Save"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+
+</FrameLayout>
