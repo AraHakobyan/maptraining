@@ -23,6 +23,16 @@
     <include layout="@layout/content_main"/>
 
 
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@color/layer_color"
+        android:clickable="true"
+        android:visibility="gone" />
+
+
     <android.support.design.widget.FloatingActionButton
         app:backgroundTint="@color/fab_color"
         android:id="@+id/fab"

@@ -184,13 +184,6 @@ public class FragmentGoogleMap extends Fragment implements OnMapReadyCallback, G
                 });
             }
         });
-
-//        addPosition(latLngs.get(0));
-//        addPosition(latLngs.get(6));
-//        addPosition(new LatLng(40.2,44.5));
-
-
-
     }
 
     private void getCurrentLocation() {

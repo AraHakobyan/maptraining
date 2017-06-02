@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     FrameLayout frameLayout;
     FloatingActionButton fab;
+    View overLayView;
 
 
     @Override
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         frameLayout = (FrameLayout) findViewById(R.id.frame);
+        overLayView = findViewById(R.id.overlay);
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                FabTransformation.with(fab).duration(100).transformTo(frameLayout);
+                FabTransformation.with(fab).duration(100).setOverlay(overLayView).transformTo(frameLayout);
                 isFabShow = false;
             }
         });
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void hideFab(){
-        FabTransformation.with(fab).duration(100).transformFrom(frameLayout);
+        FabTransformation.with(fab).duration(100).setOverlay(overLayView).transformFrom(frameLayout);
     }
 
 }

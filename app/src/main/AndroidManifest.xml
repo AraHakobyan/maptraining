@@ -19,7 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <uses-library android:name="com.google.android.maps" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:windowSoftInputMode="adjustPan"
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
