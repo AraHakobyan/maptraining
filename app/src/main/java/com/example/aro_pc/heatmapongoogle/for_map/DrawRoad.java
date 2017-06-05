@@ -328,6 +328,9 @@ public class DrawRoad {
 
               //  drawRoad(k, points, deltaLength);
                  startAnim(points);
+                 int a = (int) distance(points.get(0).latitude,points.get(0).longitude,points.get(points.size()-1).latitude,points.get(points.size()-1).longitude);
+                 Chord chord = new Chord(a,googleMap);
+                 chord.drawChort();
 
 //                drawRoute(k,points,deltaLength);
 
@@ -336,6 +339,22 @@ public class DrawRoad {
         }
 
 
+    }
+
+    public float distance (double lat_a, double lng_a, double lat_b, double lng_b )
+    {
+        double earthRadius = 3958.75;
+        double latDiff = Math.toRadians(lat_b-lat_a);
+        double lngDiff = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
+
+        int meterConversion = 1609;
+
+        return new Float(distance * meterConversion).floatValue();
     }
 
     private void startAnim(final ArrayList<LatLng> points) {
