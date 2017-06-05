@@ -119,8 +119,8 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
                 .zoom(10)
-                .bearing(90)
-                .tilt(30)
+//                .bearing(90)
+//                .tilt(30)
                 .build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

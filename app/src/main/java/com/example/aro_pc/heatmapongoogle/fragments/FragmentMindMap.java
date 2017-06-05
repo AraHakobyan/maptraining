@@ -2,6 +2,7 @@ package com.example.aro_pc.heatmapongoogle.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
@@ -35,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class FragmentMindMap extends Fragment implements OnMapReadyCallback {
+public class FragmentMindMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     private GoogleMap googleMap;
     private MapView mapView;
@@ -79,6 +81,7 @@ public class FragmentMindMap extends Fragment implements OnMapReadyCallback {
         mClusterManager.setAlgorithm(new GridBasedAlgorithm<MyClasterItem>());
 //        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.1835327,44.5112699),10));
         googleMap.setOnCameraIdleListener(mClusterManager);
+        googleMap.setOnMapClickListener(this);
 //        mClusterManager.setAlgorithm();
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -153,6 +156,37 @@ public class FragmentMindMap extends Fragment implements OnMapReadyCallback {
         items = new MyItemReader().read(inputStream);
         mClusterManager.addItems(items);
         mClusterManager.setRenderer(new GGCarRenderer());
+
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        drawCircle(latLng);
+    }
+
+    private void drawCircle(LatLng point){
+
+        // Instantiating CircleOptions to draw a circle around the marker
+        CircleOptions circleOptions = new CircleOptions();
+
+        // Specifying the center of the circle
+        circleOptions.center(point);
+
+        // Radius of the circle
+        circleOptions.radius(1500);
+
+        // Border color of the circle
+        circleOptions.strokeColor(Color.BLACK);
+
+        // Fill color of the circle
+        circleOptions.fillColor(0x30ff0000);
+
+        // Border width of the circle
+        circleOptions.strokeWidth(20);
+        
+
+        // Adding the circle to the GoogleMap
+        googleMap.addCircle(circleOptions);
 
     }
 

@@ -43,6 +43,8 @@ public class DrawRoad {
     private boolean isAnimatedMarker = false;
     private GoogleMap googleMap;
     ArrayList<LatLng> markerPoints;
+    LatLng startPos;
+    LatLng endPos;
 
     public GoogleMap getGoogleMap() {
         return googleMap;
@@ -82,10 +84,10 @@ public class DrawRoad {
         googleMap.addMarker(options);
 
         if (markerPoints.size() >= 2) {
-            LatLng origin = markerPoints.get(0);
-            LatLng dest = markerPoints.get(1);
+            startPos = markerPoints.get(0);
+            endPos = markerPoints.get(1);
 
-            String url = getDirectionsUrl(origin, dest);
+            String url = getDirectionsUrl(startPos, endPos);
 
             DownloadTask downloadTask = new DownloadTask();
 
@@ -282,6 +284,7 @@ public class DrawRoad {
     boolean t = true;
 
     public void animatedRoad(final ArrayList<LatLng> points, int c) {
+        c = 3;
         // ArrayList<ArrayList<LatLng>> matric = divArray(points);
         final int deltaLength = calculateAnimateTime(points.size());
 
@@ -329,12 +332,40 @@ public class DrawRoad {
               //  drawRoad(k, points, deltaLength);
                  startAnim(points);
                  int a = (int) distance(points.get(0).latitude,points.get(0).longitude,points.get(points.size()-1).latitude,points.get(points.size()-1).longitude);
-                 Chord chord = new Chord(a,googleMap);
-                 chord.drawChort();
+             //  Chord chord = new Chord(a,googleMap);
+             //  chord.drawChort();
 
 //                drawRoute(k,points,deltaLength);
 
 //                handler.post(runnable);
+                break;
+            case 3:
+                LatLngBounds.Builder builder1 = new LatLngBounds.Builder();
+                    builder1.include(points.get(0));
+                    builder1.include(points.get(points.size()-1));
+                LatLngBounds bounds1 = builder1.build();
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds1, 200));
+
+                PolylineOptions lineOptions1 = new PolylineOptions();
+                lineOptions1.add(startPos, endPos);
+                lineOptions1.width(10);
+                lineOptions1.color(Color.parseColor("#45000000"));
+                googleMap.addPolyline(lineOptions1);
+
+                LatLng center = new LatLng((startPos.latitude + endPos.latitude)/2,(startPos.longitude + endPos.longitude)/2);
+                int a1 = (int) distance(startPos.latitude,startPos.longitude,endPos.latitude,endPos.longitude);
+                Chord chord = new Chord(a1,googleMap,center);
+//                chord.makeCircle(center,a1);
+//                double x = 64 * a1 * a1 / 15;
+//                int r = (int) sqrt(x);
+//                LatLng point = chord.movePoint(startPos.latitude,startPos.longitude,r,30);
+//                PolylineOptions lineOptions2 = new PolylineOptions();
+//                lineOptions2.add(startPos,point);
+//                lineOptions2.width(10);
+//                lineOptions2.color(Color.parseColor("#45000000"));
+//                googleMap.addPolyline(lineOptions2);
+
+                chord.getIntersaction(startPos,endPos);
                 break;
         }
 

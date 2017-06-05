@@ -1,16 +1,25 @@
 package com.example.aro_pc.heatmapongoogle.for_map;
 
 import android.graphics.Color;
+import android.util.Log;
 
+import com.example.aro_pc.heatmapongoogle.Consts;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 /**
  * Created by Aro-PC on 6/5/2017.
@@ -23,11 +32,14 @@ public class Chord {
     int arc;
     int a;
     GoogleMap mMap;
+    LatLng center;
 
 
-    public Chord(int a, GoogleMap mMap) {
+    public Chord(int a, GoogleMap mMap,LatLng center) {
+        this.center = center;
         this.a = a;
         this.mMap = mMap;
+       // calculateArc();
     }
 
     public void calculateArc() {
@@ -41,7 +53,7 @@ public class Chord {
 
     }
 
-    private ArrayList<LatLng> makeCircle(LatLng centre, double radius)
+    public ArrayList<LatLng> makeCircle(LatLng centre, double radius)
     {
         ArrayList<LatLng> points = new ArrayList<LatLng>();
 
@@ -60,6 +72,9 @@ public class Chord {
             // saving the location on circle as a LatLng point
             LatLng point =new LatLng(latPoint * 180.0 / Math.PI, lonPoint * 180.0 / Math.PI);
 
+            // here mMap is my GoogleMap object
+            mMap.addMarker(new MarkerOptions().position(point));
+
             // now here note that same point(lat/lng) is used for marker as well as saved in the ArrayList
             points.add(point);
 
@@ -71,7 +86,7 @@ public class Chord {
     public void drawChort(){
         LatLng center = mMap.getCameraPosition().target;
         ArrayList<LatLng> circulePoints = new ArrayList<>();
-        drawCircle(center);
+        //drawCircle(center);
 
     }
 
@@ -98,6 +113,72 @@ public class Chord {
         // Adding the circle to the GoogleMap
         mMap.addCircle(circleOptions);
 
+    }
+
+//    public LatLng calculateCenter(LatLng start,int R,int beta){
+//        double dx = R*cos(beta);
+//
+//        double dy = R*sin(beta);
+//
+//        double delta_longitude = dx/(111320*cos(latitude));
+//
+//        double delta_latitude = dy/110540;
+//
+//        double longitude = start.longitude + delta_longitude;
+//
+//        double latitude = start.latitude + delta_latitude;
+//    }
+
+    public LatLng movePoint(double latitude, double longitude, double distanceInMetres, double bearing) {
+      //  calculateArc();
+        bearing = 90-alfa;
+        double brngRad = toRadians(30);
+        double latRad = toRadians(latitude);
+        double lonRad = toRadians(longitude);
+        int earthRadiusInMetres = 6371000;
+        double distFrac = distanceInMetres / earthRadiusInMetres;
+
+        double latitudeResult = asin(sin(latRad) * cos(distFrac) + cos(latRad) * sin(distFrac) * cos(brngRad));
+        double a = atan2(sin(brngRad) * sin(distFrac) * cos(latRad), cos(distFrac) - sin(latRad) * sin(latitudeResult));
+        double longitudeResult = (lonRad + a + 3 * PI) % (2 * PI) - PI;
+
+        Log.d(Consts.LOG_MAP_HELPER,"latitude: " + toDegrees(latitudeResult) + ", longitude: " + toDegrees(longitudeResult));
+        return new LatLng(toDegrees(latitudeResult),toDegrees(longitudeResult));
+
+    }
+    ArrayList<LatLng> alLatLng;
+
+    public void getIntersaction(LatLng startPos, LatLng endPos){
+        alLatLng = new ArrayList<>();
+        double cLat = ((startPos.latitude + endPos.latitude) / 2);
+        double cLon = ((startPos.longitude + endPos.longitude) / 2);
+
+        //add skew and arcHeight to move the midPoint
+        if(Math.abs(startPos.longitude - endPos.longitude) < 0.0001){
+            cLon -= 0.0195;
+        } else {
+            cLat += 0.0195;
+        }
+
+        double tDelta = 1.0/50;
+        for (double t = 0;  t <= 1.0; t+=tDelta) {
+            double oneMinusT = (1.0-t);
+            double t2 = Math.pow(t, 2);
+            double lon = oneMinusT * oneMinusT * startPos.longitude
+                    + 2 * oneMinusT * t * cLon
+                    + t2 * endPos.longitude;
+            double lat = oneMinusT * oneMinusT * startPos.latitude
+                    + 2 * oneMinusT * t * cLat
+                    + t2 * endPos.latitude;
+            alLatLng.add(new LatLng(lat, lon));
+        }
+
+        // draw polyline
+        PolylineOptions line = new PolylineOptions();
+        line.width(14);
+        line.color(Color.RED);
+        line.addAll(alLatLng);
+        mMap.addPolyline(line);
     }
 
 }
