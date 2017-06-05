@@ -22,6 +22,10 @@ public class MapHelper {
         this.map = map;
     }
 
+    public void removePolyline(){
+        mDrawRoad.removePolyline();
+    }
+
     public void drawRoad(LatLng latLng){
 //        if(map != null)
         mDrawRoad.setGoogleMap(map);
@@ -41,6 +45,13 @@ public class MapHelper {
 
     private MapHelper() {
         mDrawRoad = new DrawRoad();
+
+
+
+    }
+
+    public void removeHandlers(){
+        mDrawRoad.removeHandlers();
     }
 
     public static synchronized MapHelper getInstance(){

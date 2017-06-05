@@ -24,7 +24,7 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMyLocationChangeListener {
+public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMyLocationChangeListener, GoogleMap.OnMapLongClickListener {
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -84,6 +84,7 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         MapHelper.getInstance().setMap(googleMap);
 
         googleMap.setOnMapClickListener(this);
+        googleMap.setOnMapLongClickListener(this);
         LatLng sydney = new LatLng(40.1792, 44.4991);
 
         tileOverlay = googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
@@ -97,7 +98,7 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(40.1792, 44.4991))      // Sets the center of the map to Mountain View
                 .zoom(17)                   // Sets the zoom
-                .bearing(90)                // Sets the orientation of the camera to east
+                .bearing(1)                // Sets the orientation of the camera to east
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();
 
@@ -133,14 +134,21 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
 
     @Override
     public void onMyLocationChange(Location location) {
-        float bearing = location.getBearing() + 30;
-        cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to Mountain View
-                .zoom(17)                   // Sets the zoom
-                .bearing(bearing)                // Sets the orientation of the camera to east
-                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                .build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        float bearing = location.getBearing() + 30;
+//        cameraPosition = new CameraPosition.Builder()
+//                .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to Mountain View
+//                .zoom(17)                   // Sets the zoom
+//                .bearing(bearing)                // Sets the orientation of the camera to east
+//                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+//                .build();
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        MapHelper.getInstance().removeHandlers();
+        MapHelper.getInstance().removePolyline();
 
     }
 }
