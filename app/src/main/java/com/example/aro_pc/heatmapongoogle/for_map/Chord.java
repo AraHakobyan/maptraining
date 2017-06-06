@@ -153,11 +153,12 @@ public class Chord {
         double cLat = ((startPos.latitude + endPos.latitude) / 2);
         double cLon = ((startPos.longitude + endPos.longitude) / 2);
 
-        //add skew and arcHeight to move the midPoint
-        if(Math.abs(startPos.longitude - endPos.longitude) < 0.0001){
-            cLon -= 0.0195;
+        double d = Math.abs(startPos.longitude - endPos.longitude);
+
+        if( d < 0.0001){
+            cLon -= d/4;
         } else {
-            cLat += 0.0195;
+            cLat += d/4;
         }
 
         double tDelta = 1.0/50;
