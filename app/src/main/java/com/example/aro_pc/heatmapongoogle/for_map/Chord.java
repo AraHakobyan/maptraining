@@ -1,5 +1,6 @@
 package com.example.aro_pc.heatmapongoogle.for_map;
 
+import android.animation.AnimatorSet;
 import android.graphics.Color;
 import android.util.Log;
 
@@ -7,7 +8,6 @@ import com.example.aro_pc.heatmapongoogle.Consts;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class Chord {
         double lat = centre.latitude * Math.PI / 180.0;
         double lon = centre.longitude * Math.PI / 180.0;
 
-        for (double t = 0; t <= Math.PI * 2; t += 0.3)
+        for (double t = 0; t <= Math.PI * 2; t += 0.01)
         {
             // y
             double latPoint = lat + (radius / EARTH_RADIUS) * Math.sin(t);
@@ -72,8 +72,7 @@ public class Chord {
             // saving the location on circle as a LatLng point
             LatLng point =new LatLng(latPoint * 180.0 / Math.PI, lonPoint * 180.0 / Math.PI);
 
-            // here mMap is my GoogleMap object
-            mMap.addMarker(new MarkerOptions().position(point));
+           // mMap.addMarker(new MarkerOptions().position(point));
 
             // now here note that same point(lat/lng) is used for marker as well as saved in the ArrayList
             points.add(point);
@@ -81,6 +80,51 @@ public class Chord {
         }
 
         return points;
+    }
+
+    public ArrayList<LatLng> makeCircleBest(LatLng centre, double radius)
+    {
+        ArrayList<LatLng> points = new ArrayList<LatLng>();
+
+        double EARTH_RADIUS = 6378100.0;
+        // Convert to radians.
+        double lat = centre.latitude * Math.PI / 180.0;
+        double lon = centre.longitude * Math.PI / 180.0;
+
+        for (double t = 0; t <= Math.PI * 2; t += 0.0001)
+        {
+            // y
+            double latPoint = lat + (radius / EARTH_RADIUS) * Math.sin(t);
+            // x
+            double lonPoint = lon + (radius / EARTH_RADIUS) * Math.cos(t) / Math.cos(lat);
+
+            // saving the location on circle as a LatLng point
+            LatLng point =new LatLng(latPoint * 180.0 / Math.PI, lonPoint * 180.0 / Math.PI);
+
+            // mMap.addMarker(new MarkerOptions().position(point));
+
+            // now here note that same point(lat/lng) is used for marker as well as saved in the ArrayList
+            points.add(point);
+
+        }
+
+        return points;
+    }
+
+    public LatLng getCenterPoint(LatLng point, double radius){
+        double EARTH_RADIUS = 6378100.0;
+        double t = 0.9 ;
+        LatLng center = null;
+        double lat = Math.PI * point.latitude/180 - (radius / EARTH_RADIUS) * sin(t) ;
+        double lon = Math.PI * point.longitude/180 - (radius / EARTH_RADIUS) * cos(t) / cos(lat) ;
+
+        double centerLatitude = 180.0 * lat / Math.PI;
+        double centerLongitude = 180.0 * lon / Math.PI;
+
+        center = new LatLng(centerLatitude,centerLongitude);
+
+        return center;
+
     }
 
     public void drawChort(){
@@ -161,7 +205,7 @@ public class Chord {
             cLat += d/4;
         }
 
-        double tDelta = 1.0/50;
+        double tDelta = 1.0/5000;
         for (double t = 0;  t <= 1.0; t+=tDelta) {
             double oneMinusT = (1.0-t);
             double t2 = Math.pow(t, 2);
@@ -179,7 +223,17 @@ public class Chord {
         line.width(14);
         line.color(Color.RED);
         line.addAll(alLatLng);
-        mMap.addPolyline(line);
+        Log.d(Consts.LOG_MAP_HELPER, String.valueOf(alLatLng.size()));
+        animateLine();
+//        mMap.addPolyline(line);
+    }
+
+    AnimatorSet animatorSet;
+
+    private void animateLine() {
+        MapAnimator.getInstance().setDuration(2000);
+      //  MapAnimator.getInstance().animateLine(mMap, alLatLng);
+//        getCenterPoint()
     }
 
 }

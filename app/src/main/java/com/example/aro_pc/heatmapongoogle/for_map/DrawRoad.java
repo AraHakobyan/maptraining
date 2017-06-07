@@ -286,6 +286,8 @@ public class DrawRoad {
     public void animatedRoad(final ArrayList<LatLng> points, int c) {
         c = 3;
         // ArrayList<ArrayList<LatLng>> matric = divArray(points);
+
+
         final int deltaLength = calculateAnimateTime(points.size());
 
         switch (c) {
@@ -329,11 +331,11 @@ public class DrawRoad {
 
                 final int[] k = {0};
 
-              //  drawRoad(k, points, deltaLength);
-                 startAnim(points);
-                 int a = (int) distance(points.get(0).latitude,points.get(0).longitude,points.get(points.size()-1).latitude,points.get(points.size()-1).longitude);
-             //  Chord chord = new Chord(a,googleMap);
-             //  chord.drawChort();
+                //  drawRoad(k, points, deltaLength);
+                startAnim(points);
+//                 int a = (int) distance(points.get(0).latitude,points.get(0).longitude,points.get(points.size()-1).latitude,points.get(points.size()-1).longitude);
+                //  Chord chord = new Chord(a,googleMap);
+                //  chord.drawChort();
 
 //                drawRoute(k,points,deltaLength);
 
@@ -341,46 +343,115 @@ public class DrawRoad {
                 break;
             case 3:
                 LatLngBounds.Builder builder1 = new LatLngBounds.Builder();
-                    builder1.include(points.get(0));
-                    builder1.include(points.get(points.size()-1));
+                builder1.include(points.get(0));
+                builder1.include(points.get(points.size() - 1));
                 LatLngBounds bounds1 = builder1.build();
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds1, 200));
 
                 PolylineOptions lineOptions1 = new PolylineOptions();
                 lineOptions1.add(startPos, endPos);
                 lineOptions1.width(10);
-                lineOptions1.color(Color.parseColor("#45000000"));
+                lineOptions1.color(Color.parseColor("#20000000"));
                 googleMap.addPolyline(lineOptions1);
 
-                LatLng center = new LatLng((startPos.latitude + endPos.latitude)/2,(startPos.longitude + endPos.longitude)/2);
-                int a1 = (int) distance(startPos.latitude,startPos.longitude,endPos.latitude,endPos.longitude);
-                Chord chord = new Chord(a1,googleMap,center);
-//                chord.makeCircle(center,a1);
-//                double x = 64 * a1 * a1 / 15;
-//                int r = (int) sqrt(x);
-//                LatLng point = chord.movePoint(startPos.latitude,startPos.longitude,r,30);
-//                PolylineOptions lineOptions2 = new PolylineOptions();
-//                lineOptions2.add(startPos,point);
-//                lineOptions2.width(10);
-//                lineOptions2.color(Color.parseColor("#45000000"));
-//                googleMap.addPolyline(lineOptions2);
+                LatLng center = new LatLng((startPos.latitude + endPos.latitude) / 2, (startPos.longitude + endPos.longitude) / 2);
+                double a1 = distance(startPos.latitude, startPos.longitude, endPos.latitude, endPos.longitude);
+                Chord chord = new Chord((int) a1, googleMap, center);
+                chord.getIntersaction(startPos, endPos);
 
-                chord.getIntersaction(startPos,endPos);
+                //draw circules and all you want with map ;)
+
+                LatLng centerPos1 = chord.getCenterPoint(startPos, a1);
+
+                googleMap.addMarker(new MarkerOptions().position(centerPos1));
+
+                ArrayList<LatLng> firstArrayList = chord.makeCircle(startPos, a1);
+
+                LatLng centerPos2 = chord.getCenterPoint(endPos, a1);
+                googleMap.addMarker(new MarkerOptions().position(centerPos2));
+                ArrayList<LatLng> secondArrayList = chord.makeCircle(endPos, a1);
+                googleMap.addPolyline(new PolylineOptions().addAll(firstArrayList));
+                googleMap.addPolyline(new PolylineOptions().addAll(secondArrayList).color(Color.RED));
+
+                ArrayList<LatLng> newCenters = new ArrayList<>();
+
+                for (LatLng firstLatLng : firstArrayList) {
+                    for (LatLng secondLatLng : secondArrayList) {
+//                        if (secondLatLng == firstLatLng){
+//                            newCenters.add(secondLatLng);
+//                        }
+                        if (Math.abs(firstLatLng.latitude - secondLatLng.latitude) < 0.001 && Math.abs(firstLatLng.longitude - secondLatLng.longitude) < 0.01) {
+                            newCenters.add(firstLatLng);
+                        }
+                    }
+                }
+
+                googleMap.addPolyline(new PolylineOptions().addAll(newCenters).color(Color.GREEN));
+                ArrayList<LatLng> partArray = new ArrayList<>();
+                LatLng theCenterILookingFor = null;
+
+                if (newCenters.get(0).latitude - newCenters.get(newCenters.size() - 1).latitude < 0) {
+                    theCenterILookingFor = newCenters.get(newCenters.size()/4);
+                } else {
+                    theCenterILookingFor = newCenters.get(newCenters.size() - newCenters.size()/4);
+                }
+                ArrayList<LatLng> theardArrayList = chord.makeCircleBest(theCenterILookingFor, a1);
+                googleMap.addPolyline(new PolylineOptions().addAll(theardArrayList).color(Color.BLUE));
+
+                ArrayList<LatLng> theLine = new ArrayList<>();
+
+
+                    for (LatLng therdLatLng : theardArrayList) {
+//                        if (secondLatLng == firstLatLng){
+//                            newCenters.add(secondLatLng);
+//                        }
+                        if (Math.abs(startPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(startPos.longitude - therdLatLng.longitude) < 0.01) {
+                            theLine.add(therdLatLng);
+                        }
+
+                        if (Math.abs(endPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(endPos.longitude - therdLatLng.longitude) < 0.01) {
+                            theLine.add(therdLatLng);
+                        }
+                    }
+
+                    googleMap.addPolyline(new PolylineOptions().addAll(theLine).color(Color.YELLOW));
+
+                    LatLng start = theLine.get(theLine.size()/4);
+                    LatLng end = theLine.get(theLine.size() - theLine.size()/4);
+
+                    int startPos = 0;
+                    int endPos = 0;
+                    startPos = theardArrayList.indexOf(start);
+                    endPos = theardArrayList.indexOf(end);
+
+                    List<LatLng> subString1 = new ArrayList<>();
+
+                    if(endPos > startPos){
+                    }
+
+                    subString1 = theardArrayList.subList(startPos,endPos);
+
+                    googleMap.addPolyline(new PolylineOptions().addAll(subString1).color(Color.CYAN));
+
+                    //evrikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
                 break;
         }
 
 
     }
 
-    public float distance (double lat_a, double lng_a, double lat_b, double lng_b )
-    {
+    public float distance(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = 3958.75;
-        double latDiff = Math.toRadians(lat_b-lat_a);
-        double lngDiff = Math.toRadians(lng_b-lng_a);
-        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+        double latDiff = Math.toRadians(lat_b - lat_a);
+        double lngDiff = Math.toRadians(lng_b - lng_a);
+        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
                 Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = earthRadius * c;
 
         int meterConversion = 1609;
@@ -452,7 +523,7 @@ public class DrawRoad {
 //        };
 //    }
 
-    public void removePolyline(){
+    public void removePolyline() {
         polyline.setColor(Color.parseColor("#d5d5d5"));
 
 
@@ -461,59 +532,59 @@ public class DrawRoad {
     AnimatorSet firstAnimationSet;
     AnimatorSet secondAnimator;
 
-    public void drawRoute(final int[] k, final ArrayList<LatLng> points, final int deltaLength){
+    public void drawRoute(final int[] k, final ArrayList<LatLng> points, final int deltaLength) {
         firstAnimationSet = new AnimatorSet();
 //        runnable = new Runnable() {
 //            @Override
 //            public void run() {
 
-                lineOptions = new PolylineOptions();
-                lineOptions.width(14);
-                lineOptions.color(Color.parseColor(strColor)).add(points.get(0));
-                polyline = googleMap.addPolyline(lineOptions);
+        lineOptions = new PolylineOptions();
+        lineOptions.width(14);
+        lineOptions.color(Color.parseColor(strColor)).add(points.get(0));
+        polyline = googleMap.addPolyline(lineOptions);
 //                polyline.setPoints(points);
 
 
-                ValueAnimator roudAnimator = ValueAnimator.ofInt(0,100);
-                roudAnimator.setDuration(10000);
-                roudAnimator.setInterpolator(new FastOutLinearInInterpolator());
-                roudAnimator.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+        ValueAnimator roudAnimator = ValueAnimator.ofInt(0, 100);
+        roudAnimator.setDuration(10000);
+        roudAnimator.setInterpolator(new FastOutLinearInInterpolator());
+        roudAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
 
-                    }
+            }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        polyline.setColor(Color.RED);
-                    }
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                polyline.setColor(Color.RED);
+            }
 
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
+            @Override
+            public void onAnimationCancel(Animator animation) {
 
-                    }
+            }
 
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
+            @Override
+            public void onAnimationRepeat(Animator animation) {
 
-                    }
-                });
+            }
+        });
 
-                roudAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
+        roudAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
 
-                        List<LatLng> foregroundPoints = points;
+                List<LatLng> foregroundPoints = points;
 
-                        int percentageValue = (int) animation.getAnimatedValue();
-                        int pointcount = foregroundPoints.size();
-                        int countTobeRemoved = (int) (pointcount * (percentageValue / 100.0f));
-                        List<LatLng> subListTobeRemoved = foregroundPoints.subList(0, countTobeRemoved);
-                        subListTobeRemoved.clear();
+                int percentageValue = (int) animation.getAnimatedValue();
+                int pointcount = foregroundPoints.size();
+                int countTobeRemoved = (int) (pointcount * (percentageValue / 100.0f));
+                List<LatLng> subListTobeRemoved = foregroundPoints.subList(0, countTobeRemoved);
+                subListTobeRemoved.clear();
 
-                        polyline.setPoints(foregroundPoints);
-                    }
-                });
+                polyline.setPoints(foregroundPoints);
+            }
+        });
 
 
         ObjectAnimator foregroundRouteAnimator = ObjectAnimator.ofObject(this, "routeIncreaseForward", new RouteEvaluator(), points.toArray());
@@ -542,7 +613,7 @@ public class DrawRoad {
         foregroundRouteAnimator.setDuration(2000);
 
 
-                firstAnimationSet.playSequentially(foregroundRouteAnimator, roudAnimator);
+        firstAnimationSet.playSequentially(foregroundRouteAnimator, roudAnimator);
 
         firstAnimationSet.start();
         firstAnimationSet.addListener(new Animator.AnimatorListener() {
