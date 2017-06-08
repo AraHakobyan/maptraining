@@ -57,7 +57,7 @@ public class Chord {
     {
         ArrayList<LatLng> points = new ArrayList<LatLng>();
 
-        double EARTH_RADIUS = 6378100.0;
+        double EARTH_RADIUS = 6378137.0;
         // Convert to radians.
         double lat = centre.latitude * Math.PI / 180.0;
         double lon = centre.longitude * Math.PI / 180.0;
@@ -86,7 +86,7 @@ public class Chord {
     {
         ArrayList<LatLng> points = new ArrayList<LatLng>();
 
-        double EARTH_RADIUS = 6378100.0;
+        double EARTH_RADIUS = 6378137.0;
         // Convert to radians.
         double lat = centre.latitude * Math.PI / 180.0;
         double lon = centre.longitude * Math.PI / 180.0;
@@ -112,7 +112,7 @@ public class Chord {
     }
 
     public LatLng getCenterPoint(LatLng point, double radius){
-        double EARTH_RADIUS = 6378100.0;
+        double EARTH_RADIUS = 6378137.0;
         double t = 0.9 ;
         LatLng center = null;
         double lat = Math.PI * point.latitude/180 - (radius / EARTH_RADIUS) * sin(t) ;

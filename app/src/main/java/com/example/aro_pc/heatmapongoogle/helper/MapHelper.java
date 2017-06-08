@@ -2,6 +2,7 @@ package com.example.aro_pc.heatmapongoogle.helper;
 
 import com.example.aro_pc.heatmapongoogle.for_map.DrawRoad;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -13,6 +14,15 @@ public class MapHelper {
     private static MapHelper instance;
     private GoogleMap map;
     private DrawRoad mDrawRoad;
+    private MapView mapView;
+
+    public MapView getMapView() {
+        return mapView;
+    }
+
+    public void setMapView(MapView mapView) {
+        this.mapView = mapView;
+    }
 
     public GoogleMap getMap() {
         return map;

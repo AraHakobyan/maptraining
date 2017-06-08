@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -225,7 +224,7 @@ public class MapAnimator {
         this.duration = duration;
     }
 
-    public void animateLine(GoogleMap googleMap, final ArrayList<LatLng> alLatLng) {
+    public void animateLine(GoogleMap googleMap, final List<LatLng> alLatLng) {
 
         if (firstRunAnimSet == null) {
             firstRunAnimSet = new AnimatorSet();
@@ -316,6 +315,7 @@ public class MapAnimator {
 
         final ObjectAnimator foregroundRouteAnimator = ObjectAnimator.ofObject(this, "routeIncreaseForward", new LineEvaluator(), alLatLng.toArray());
         foregroundRouteAnimator.setInterpolator(new FastOutLinearInInterpolator());
+        foregroundRouteAnimator.setRepeatMode(ValueAnimator.REVERSE);
         foregroundRouteAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {

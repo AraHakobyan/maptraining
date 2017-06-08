@@ -12,6 +12,7 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.example.aro_pc.heatmapongoogle.Consts;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -391,9 +392,9 @@ public class DrawRoad {
                 LatLng theCenterILookingFor = null;
 
                 if (newCenters.get(0).latitude - newCenters.get(newCenters.size() - 1).latitude < 0) {
-                    theCenterILookingFor = newCenters.get(newCenters.size()/4);
+                    theCenterILookingFor = newCenters.get(newCenters.size() / 4);
                 } else {
-                    theCenterILookingFor = newCenters.get(newCenters.size() - newCenters.size()/4);
+                    theCenterILookingFor = newCenters.get(newCenters.size() - newCenters.size() / 4);
                 }
                 ArrayList<LatLng> theardArrayList = chord.makeCircleBest(theCenterILookingFor, a1);
                 googleMap.addPolyline(new PolylineOptions().addAll(theardArrayList).color(Color.BLUE));
@@ -401,48 +402,51 @@ public class DrawRoad {
                 ArrayList<LatLng> theLine = new ArrayList<>();
 
 
-                    for (LatLng therdLatLng : theardArrayList) {
+                for (LatLng therdLatLng : theardArrayList) {
 //                        if (secondLatLng == firstLatLng){
 //                            newCenters.add(secondLatLng);
 //                        }
-                        if (Math.abs(startPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(startPos.longitude - therdLatLng.longitude) < 0.01) {
-                            theLine.add(therdLatLng);
-                        }
-
-                        if (Math.abs(endPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(endPos.longitude - therdLatLng.longitude) < 0.01) {
-                            theLine.add(therdLatLng);
-                        }
+                    if (Math.abs(startPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(startPos.longitude - therdLatLng.longitude) < 0.01) {
+                        theLine.add(therdLatLng);
                     }
 
-                    googleMap.addPolyline(new PolylineOptions().addAll(theLine).color(Color.YELLOW));
-
-                    LatLng start = theLine.get(theLine.size()/4);
-                    LatLng end = theLine.get(theLine.size() - theLine.size()/4);
-
-                    int startPos = 0;
-                    int endPos = 0;
-                    startPos = theardArrayList.indexOf(start);
-                    endPos = theardArrayList.indexOf(end);
-
-                    List<LatLng> subString1 = new ArrayList<>();
-
-                    if(endPos > startPos){
+                    if (Math.abs(endPos.latitude - therdLatLng.latitude) < 0.001 && Math.abs(endPos.longitude - therdLatLng.longitude) < 0.01) {
+                        theLine.add(therdLatLng);
                     }
+                }
 
-                    subString1 = theardArrayList.subList(startPos,endPos);
+                googleMap.addPolyline(new PolylineOptions().addAll(theLine).color(Color.YELLOW));
 
-                    googleMap.addPolyline(new PolylineOptions().addAll(subString1).color(Color.CYAN));
+                LatLng start = theLine.get(theLine.size() / 4);
+                LatLng end = theLine.get(theLine.size() - theLine.size() / 4);
 
-                    //evrikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                int startPos = 0;
+                int endPos = 0;
+                startPos = theardArrayList.indexOf(start);
+                endPos = theardArrayList.indexOf(end);
+
+                List<LatLng> subString1 = new ArrayList<>();
+
+                if (endPos > startPos) {
+                }
+
+                subString1 = theardArrayList.subList(startPos, endPos);
+//                subString1.add(0,this.endPos);
+//                subString1.add(this.startPos);
+
+                googleMap.addPolyline(new PolylineOptions().addAll(subString1).color(Consts.GREY_900).width(14));
+
+                //evrikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 
-
+                startAnim(subString1);
 
                 break;
         }
 
 
     }
+
 
     public float distance(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = 3958.75;
@@ -459,10 +463,10 @@ public class DrawRoad {
         return new Float(distance * meterConversion).floatValue();
     }
 
-    private void startAnim(final ArrayList<LatLng> points) {
+    private void startAnim(final List<LatLng> points) {
         if (googleMap != null) {
             MapAnimator.getInstance().setDuration(2000);
-            MapAnimator.getInstance().animateRoute(googleMap, points);
+            MapAnimator.getInstance().animateLine(googleMap, points);
         } else {
             //Toast.makeText(getApplicationContext(), "Map not ready", Toast.LENGTH_LONG).show();
         }

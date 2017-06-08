@@ -40,6 +40,9 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.balysv.materialmenu:material-menu:2.0.0'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'org.osmdroid:osmdroid-android:4.3'
 }
 repositories {
     mavenCentral()

@@ -3,10 +3,13 @@ package com.example.aro_pc.heatmapongoogle.fragments;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.aro_pc.heatmapongoogle.Consts;
 import com.example.aro_pc.heatmapongoogle.R;
 import com.example.aro_pc.heatmapongoogle.helper.MapHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,7 +27,7 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMyLocationChangeListener, GoogleMap.OnMapLongClickListener {
+public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMyLocationChangeListener, GoogleMap.OnMapLongClickListener, View.OnTouchListener {
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -33,6 +36,7 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     private TileOverlay tileOverlay;
     private ArrayList<LatLng> markerPoints;
     private CameraPosition cameraPosition;
+
 
     private static FragmentLayerdMap instance = null;
 
@@ -71,8 +75,17 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
 
     private void initUi(View view) {
         mapView = (MapView) view.findViewById(R.id.map_view_layerd_map);
-    }
 
+        mapView.setOnTouchListener(this);
+        mapView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(Consts.LOG_MAP_TOUCH,"map is clicked");
+            }
+        });
+
+
+    }
 
 
     Marker marker;
@@ -116,20 +129,49 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     public void onMapClick(LatLng latLng) {
 
 
-        cameraPosition = new CameraPosition.Builder()
-                .target(latLng)
-                .zoom(10)
-//                .bearing(90)
-//                .tilt(30)
-                .build();
+//        cameraPosition = new CameraPosition.Builder()
+//                .target(latLng)
+//                .zoom(10)
+////                .bearing(90)
+////                .tilt(30)
+//                .build();
 
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        MapHelper.getInstance().animateRoad(true);
-        MapHelper.getInstance().drawRoad(latLng);
-        MapHelper.getInstance().animateMarker(true);
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        MapHelper.getInstance().animateRoad(true);
+//        MapHelper.getInstance().drawRoad(latLng);
+//        MapHelper.getInstance().animateMarker(true);
+
+        drawCanvas(latLng);
 
     }
 
+    private void drawCanvas(LatLng latLng) {
+//        Point point = googleMap.getProjection().toScreenLocation(latLng);
+
+//        Canvas canvas = new Canvas(Bitmap.createBitmap(mapView.getWidth(), mapView.getHeight(), Bitmap.Config.ARGB_8888));
+//        canvas.drawColor(Color.BLACK);
+//        Paint innerCirclePaint;
+
+//        innerCirclePaint = new Paint();
+//        innerCirclePaint.setColor(Color.BLUE);
+//        innerCirclePaint.setAlpha(25);
+//        innerCirclePaint.setAntiAlias(true);
+
+//        innerCirclePaint.setStyle(Paint.Style.FILL);
+//        canvas.drawCircle(point.x, point.y, 1000, innerCirclePaint);
+
+//        mapView.draw(canvas);
+
+//        Matrix matrix = new Matrix();
+//        BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
+////Set to UnAutoScale
+//        bfoOptions.inScaled = false;
+////Fit to your size
+//        matrix.setScale(50, 50);
+//        Bitmap tempBitmap = BitmapFactory.decodeResource(R.drawable.ic_car_icon, bfoOptions);
+//        Bitmap outputbitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true);
+
+    }
 
 
     @Override
@@ -150,5 +192,30 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         MapHelper.getInstance().removeHandlers();
         MapHelper.getInstance().removePolyline();
 
+
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.d(Consts.LOG_MAP_TOUCH,"map is touched");
+        final int X = (int) event.getRawX();
+        final int Y = (int) event.getRawY();
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+        }
+        mapView.invalidate();
+        return true;
+    }
+
 }
+
