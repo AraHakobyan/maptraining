@@ -95,6 +95,7 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         this.googleMap = map;
 
         MapHelper.getInstance().setMap(googleMap);
+        MapHelper.getInstance().setActivity(getActivity());
 
         googleMap.setOnMapClickListener(this);
         googleMap.setOnMapLongClickListener(this);
@@ -129,49 +130,25 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     public void onMapClick(LatLng latLng) {
 
 
-//        cameraPosition = new CameraPosition.Builder()
-//                .target(latLng)
-//                .zoom(10)
-////                .bearing(90)
-////                .tilt(30)
-//                .build();
+        Log.d("clicked1","latitude " + latLng.latitude + " longitude " + latLng.longitude);
+        cameraPosition = new CameraPosition.Builder()
+                .target(latLng)
+                .zoom(10)
+//                .bearing(90)
+//                .tilt(30)
+                .build();
 
-//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//        MapHelper.getInstance().animateRoad(true);
-//        MapHelper.getInstance().drawRoad(latLng);
-//        MapHelper.getInstance().animateMarker(true);
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        drawCanvas(latLng);
+        MapHelper.getInstance().animateRoad(true);
+        MapHelper.getInstance().drawRoad(latLng);
+        MapHelper.getInstance().animateMarker(true);
 
-    }
 
-    private void drawCanvas(LatLng latLng) {
-//        Point point = googleMap.getProjection().toScreenLocation(latLng);
-
-//        Canvas canvas = new Canvas(Bitmap.createBitmap(mapView.getWidth(), mapView.getHeight(), Bitmap.Config.ARGB_8888));
-//        canvas.drawColor(Color.BLACK);
-//        Paint innerCirclePaint;
-
-//        innerCirclePaint = new Paint();
-//        innerCirclePaint.setColor(Color.BLUE);
-//        innerCirclePaint.setAlpha(25);
-//        innerCirclePaint.setAntiAlias(true);
-
-//        innerCirclePaint.setStyle(Paint.Style.FILL);
-//        canvas.drawCircle(point.x, point.y, 1000, innerCirclePaint);
-
-//        mapView.draw(canvas);
-
-//        Matrix matrix = new Matrix();
-//        BitmapFactory.Options bfoOptions = new BitmapFactory.Options();
-////Set to UnAutoScale
-//        bfoOptions.inScaled = false;
-////Fit to your size
-//        matrix.setScale(50, 50);
-//        Bitmap tempBitmap = BitmapFactory.decodeResource(R.drawable.ic_car_icon, bfoOptions);
-//        Bitmap outputbitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true);
 
     }
+
+
 
 
     @Override

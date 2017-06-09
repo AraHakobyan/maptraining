@@ -1,5 +1,7 @@
 package com.example.aro_pc.heatmapongoogle.helper;
 
+import android.app.Activity;
+
 import com.example.aro_pc.heatmapongoogle.for_map.DrawRoad;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -15,6 +17,15 @@ public class MapHelper {
     private GoogleMap map;
     private DrawRoad mDrawRoad;
     private MapView mapView;
+    private Activity activity;
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
 
     public MapView getMapView() {
         return mapView;

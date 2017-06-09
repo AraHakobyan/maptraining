@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +22,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 
 import com.example.aro_pc.heatmapongoogle.animations.CustomAnimations;
@@ -34,7 +34,7 @@ import com.example.aro_pc.heatmapongoogle.stackoverflow.StackOverFlow;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.konifar.fab_transformation.FabTransformation;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnTouchListener{
 
 
     private FragmentGoogleMap fragmentGoogleMap;
@@ -208,10 +208,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if(X > width / 2) {
 //                    animations.fabAnimate(fab,false,fab.getWidth() ,Y);
-                    animatePixels(X,width - fab.getWidth() - a,Y,height - fab.getHeight() - a,Consts.TORIGHT);
+                    animatePixels(X,width - fab.getWidth() - a,Y,height - fab.getHeight() - a);
                 } else {
 //                    animations.fabAnimate(fab,false, a,Y);
-                    animatePixels(X,a,Y,height - fab.getHeight() - a,Consts.TOLEFT);
+                    animatePixels(X,a,Y,height - fab.getHeight() - a);
                 }
 
 
@@ -238,9 +238,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-    private void animatePixels(final int fromX, final int toX, int fromY, final int toY, final String dir){
+    public void animatePixels(final int fromX, final int toX, int fromY, final int toY){
         ValueAnimator valueAnimator = ValueAnimator.ofInt(fromY,toY);
-        valueAnimator.setInterpolator(new FastOutLinearInInterpolator());
+//        valueAnimator.setInterpolator(new AccelerateInterpolator());
+        valueAnimator.setInterpolator(new BounceInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -257,13 +258,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onAnimationEnd(Animator animation) {
 
-              switch (dir){
-                  case Consts.TORIGHT:
-                      animateToRight(toY,fromX, toX);
-                      break;
-                  case Consts.TOLEFT:
-                      break;
-              }
+//              switch (dir){
+//                  case Consts.TORIGHT:
+//                      animateToRight(toY,fromX, toX);
+//                      break;
+//                  case Consts.TOLEFT:
+//                      animateToRight(toY,fromX, toX);
+
+//                      break;
+//              }
 
             }
 
@@ -277,38 +280,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        valueAnimator.setDuration(300);
+        valueAnimator.setDuration(2000);
         valueAnimator.start();
-    }
 
-    AnimatorSet animatorSet;
-
-    private void animateToRight(int fromY,int fromX, int toX) {
-
-        animatorSet = new AnimatorSet();
-
-        ValueAnimator upAnim = ValueAnimator.ofInt(fromY,fromY-250);
-        upAnim.setDuration(100);
-        upAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                fab.setY((int)animation.getAnimatedValue());
-            }
-        });
-
-        ValueAnimator rightAnim = ValueAnimator.ofInt(fromX,toX);
-        rightAnim.setDuration(100);
-        rightAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator valueAnimator1 = ValueAnimator.ofInt(fromX,toX);
+        valueAnimator1.setDuration(2000);
+        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 fab.setX((int) animation.getAnimatedValue());
             }
         });
 
-        animatorSet.playTogether(rightAnim,upAnim);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(valueAnimator1,valueAnimator);
         animatorSet.start();
 
     }
+
+    AnimatorSet animatorSet;
+
+
+
 }
 
 

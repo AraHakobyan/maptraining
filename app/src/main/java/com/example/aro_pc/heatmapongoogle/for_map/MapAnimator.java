@@ -255,7 +255,7 @@ public class MapAnimator {
         optionsForeground = new PolylineOptions().add(alLatLng.get(0)).color(Color.GREEN).width(4);
         foregroundPolyline = googleMap.addPolyline(optionsForeground);
 
-        final ValueAnimator percentageCompletion = ValueAnimator.ofInt(0, 5000);
+        final ValueAnimator percentageCompletion = ValueAnimator.ofInt(0, 100);
         percentageCompletion.setDuration(2000);
         percentageCompletion.setInterpolator(new FastOutLinearInInterpolator());
         final int[] startCount = {0};
@@ -266,7 +266,7 @@ public class MapAnimator {
 
                 int percentageValue = (int) animation.getAnimatedValue();
                 int pointcount = backgroundPolyline.getPoints().size();
-                int countTobeRemoved = (int) (pointcount * (percentageValue / 5000.0f));
+                int countTobeRemoved = (int) (pointcount * (percentageValue / 100.f));
                 if((startCount[0] - countTobeRemoved / 8) < countTobeRemoved){
                     List<LatLng> subListTobeRemoved;
                     if (startCount[0] != 0  ) {
