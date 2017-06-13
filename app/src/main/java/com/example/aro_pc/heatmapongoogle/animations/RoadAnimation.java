@@ -151,7 +151,7 @@ public class RoadAnimation {
 
         final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.GRAY, Color.BLACK);
         colorAnimation.setInterpolator(new AccelerateInterpolator());
-        colorAnimation.setDuration(1200); // milliseconds
+        colorAnimation.setDuration(1500);
 
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -186,7 +186,7 @@ public class RoadAnimation {
 
 
         AnimatorSet roadAnimator = new AnimatorSet();
-        roadAnimator.playSequentially(valueAnimator,colorAnimation);
+        roadAnimator.playTogether(valueAnimator,colorAnimation);
         return roadAnimator;
     }
 
