@@ -18,11 +18,13 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.example.aro_pc.heatmapongoogle.Consts;
 import com.example.aro_pc.heatmapongoogle.R;
+import com.example.aro_pc.heatmapongoogle.animations.RoadAnimation;
 import com.example.aro_pc.heatmapongoogle.helper.MapHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -66,6 +68,7 @@ public class DrawRoad {
     ArrayList<LatLng> markerPoints;
     LatLng startPos;
     LatLng endPos;
+    private float lastZoomLevel = 0;
 
     public GoogleMap getGoogleMap() {
         return googleMap;
@@ -99,11 +102,10 @@ public class DrawRoad {
 
         if (markerPoints.size() == 1) {
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
         } else if (markerPoints.size() == 2) {
-
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         }
+
 
         googleMap.addMarker(options);
 
@@ -180,6 +182,26 @@ public class DrawRoad {
 
     public void removeHandlers() {
         handler.removeCallbacks(runnable);
+    }
+
+    public void setNewZoomLevel(float newZoomLevel) {
+        String zoomLevel = null;
+        if (lastZoomLevel == 0) {
+            lastZoomLevel = newZoomLevel;
+            return;
+        }
+        if (lastZoomLevel == newZoomLevel) return;
+        if (lastZoomLevel > newZoomLevel) zoomLevel = "zoomOut";
+        if (lastZoomLevel < newZoomLevel) zoomLevel = "zoomIn";
+        switch (zoomLevel) {
+            case "zoomIn":
+
+                Log.d("zoom", "zoom in : " + newZoomLevel);
+                break;
+            case "zoomOut":
+                Log.d("zoom", "zoom out : " + newZoomLevel);
+                break;
+        }
     }
 
 
@@ -308,7 +330,7 @@ public class DrawRoad {
     boolean t = true;
 
     public void animatedRoad(final ArrayList<LatLng> points, int c) {
-        c = 5;
+        c = 6;
         // ArrayList<ArrayList<LatLng>> matric = divArray(points);
 
         LatLngBounds.Builder builder1 = new LatLngBounds.Builder();
@@ -474,14 +496,6 @@ public class DrawRoad {
                 LatLngBounds bounds2 = builder2.build();
 
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds2, 200));
-
-
-                final LatLng finalStartPos = this.startPos;
-                final LatLng finalEndPos = this.endPos;
-
-                final Point startPoint = googleMap.getProjection().toScreenLocation(finalStartPos);
-                final Point endPoint = googleMap.getProjection().toScreenLocation(finalEndPos);
-                getAllPixels(startPoint, endPoint);
                 animL();
 //                        animPixels(startPoint.x,endPoint.x,startPoint.y, endPoint.y);
 
@@ -497,26 +511,40 @@ public class DrawRoad {
 //                GroundOverlay groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions().image())
 
                 Drawable drawable = ResourcesCompat.getDrawable(MapHelper.getInstance().getActivity().getResources(), R.drawable.ic_brightness_3_black_24dp, null);
-                VectorDrawable vectorDrawable = (VectorDrawable)drawable;
+
+
+                VectorDrawable vectorDrawable = (VectorDrawable) drawable;
 
                 int h = vectorDrawable.getIntrinsicHeight();
                 int w = vectorDrawable.getIntrinsicWidth();
-                vectorDrawable.setBounds(0,0,w,h);
-                Bitmap bm = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
+                vectorDrawable.setBounds(0, 0, w, h);
+                Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bm);
                 vectorDrawable.draw(canvas);
-                BitmapDescriptor bmd =  BitmapDescriptorFactory.fromBitmap(bm);
+                BitmapDescriptor bmd = BitmapDescriptorFactory.fromBitmap(bm);
+                double a2 = distance(this.startPos.latitude, this.startPos.longitude, this.endPos.latitude, this.endPos.longitude);
 
-                GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().positionFromBounds(bounds1).image(bmd);
+                LatLng cL = new LatLng((this.endPos.latitude - this.startPos.latitude) / 2 + this.startPos.latitude, (this.endPos.longitude - this.startPos.longitude) / 2 + this.startPos.longitude);
+
+                GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().position(cL, (float) a2).image(bmd);
 
                 GroundOverlay groundOverlay = googleMap.addGroundOverlay(groundOverlayOptions);
 
-
                 break;
+
+            case 6:
+                RoadAnimation roadAnimation = new RoadAnimation(googleMap,this.startPos,this.endPos, points);
+                break;
+
         }
 
 
     }
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
 
     private BitmapDescriptor vectorToBitmap(@DrawableRes int id, @ColorInt int color) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(MapHelper.getInstance().getActivity().getResources(), id, null);
@@ -527,10 +555,6 @@ public class DrawRoad {
         DrawableCompat.setTint(vectorDrawable, color);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-    private void getAllPixels(Point startPoint, Point endPoint) {
-
     }
 
     ArrayList<LatLng> shadowArrayList;
@@ -607,19 +631,22 @@ public class DrawRoad {
     public void animL() {
         shadowArrayList = new ArrayList<>();
 
-        double k = 0.1;
+        double heading =Math.abs(SphericalUtil.computeHeading(startPos, endPos)) ;
+        double k = 0.5;
 
-        double culc = Math.abs(startPos.longitude - endPos.longitude);
 
-        if (culc > 0.05 && culc < 0.1) {
-            k = 0.3;
-        } else if (culc < 0.05 && culc > 0.01) {
-            k = 0.1;
-        } else if (culc > 0.1) {
-            k = 0.4;
-        } else if (culc < 0.01) {
+        if (heading < 5 || heading > 175 ) {
             k = 0.05;
+        } else if (heading < 15 || heading > 165) {
+            k = 0.1;
+        } else if (heading < 45 || heading > 135) {
+            k = 0.25;
+        } else if (heading < 60 || heading > 120) {
+            k = 0.35;
+        } else if(heading < 85 || heading > 95) {
+            k = 0.4;
         }
+
 
         if (startPos.longitude > endPos.longitude) {
             lats = showCurvedPolyline(endPos, startPos, k);
@@ -636,7 +663,6 @@ public class DrawRoad {
             lats = showCurvedPolyline(startPos, endPos, k);
             lats.add(0, startPos);
             lats.add(lats.size() - 1, endPos);
-            lats.add(0, startPos);
         }
 
 //        LatLng startPosForShadow = lats.get(0);
@@ -654,16 +680,17 @@ public class DrawRoad {
 
             shadowArrayList.add(latLng);
         }
+        shadowArrayList.add(0, startPos);
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.width(14);
-        polylineOptions.color(Color.BLACK);
+        polylineOptions.width(7);
+        polylineOptions.color(Color.BLACK).zIndex(14);
         final Polyline polyline = googleMap.addPolyline(polylineOptions);
 
         ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
         valueAnimator.setDuration(800);
         valueAnimator.setInterpolator(new FastOutLinearInInterpolator());
-        valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
         final ArrayList<LatLng> arr = new ArrayList<>();
+        marker = googleMap.addMarker(new MarkerOptions().position(lats.get(0)));
 
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -677,51 +704,11 @@ public class DrawRoad {
                 for (LatLng la : subListTobeRemoved)
                     arr.add(la);
                 polyline.setPoints(arr);
-
-                Point draw;
-                if (arr.size() != 0) {
-
-                    if (marker != null)
-                        marker.remove();
-                    marker = googleMap.addMarker(new MarkerOptions().position(arr.get(arr.size() - 1)).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_create_black_24dp)));
-
-//                    draw = googleMap.getProjection().toScreenLocation(arr.get(arr.size() - 1));
-//                    MapHelper.getInstance().getDraw().setY(draw.y);
-//                    MapHelper.getInstance().getDraw().setX(draw.x);
-                }
-
-
                 subListTobeRemoved.clear();
             }
         });
-        valueAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
 
-//                MapHelper.getInstance().getDraw().setVisibility(View.VISIBLE);
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                //googleMap.addPolyline(new PolylineOptions().addAll(shadowArrayList));
-                marker.remove();
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-//        valueAnimator.start();
-
-        final Polyline pol = googleMap.addPolyline(new PolylineOptions().width(10).color(Color.GRAY));
+        final Polyline pol = googleMap.addPolyline(new PolylineOptions().width(10).color(Color.parseColor("#509E9E9E")).zIndex(8));
 
 
         ValueAnimator shadowAnimator = ValueAnimator.ofInt(0, 100);
@@ -905,6 +892,7 @@ public class DrawRoad {
         //Calculate distance and heading between two points
         double d = SphericalUtil.computeDistanceBetween(p1, p2);
         double h = SphericalUtil.computeHeading(p1, p2);
+        Log.d("heading ", String.valueOf(h));
 
         //Midpoint position
         LatLng p = SphericalUtil.computeOffset(p1, d * 0.5, h);
@@ -924,7 +912,7 @@ public class DrawRoad {
         double h2 = SphericalUtil.computeHeading(c, p2);
 
         //Calculate positions of points on circle border and add them to polyline options
-        int numpoints = 1000;
+        int numpoints = 2000;
         double step = (h2 - h1) / numpoints;
         ArrayList<LatLng> latLngs = new ArrayList<>();
 

@@ -19,6 +19,12 @@ public class MapHelper {
     private MapView mapView;
     private Activity activity;
 
+    public float getNewZoomLevel() {
+        return newZoomLevel;
+    }
+
+    private float newZoomLevel;
+
     public Activity getActivity() {
         return activity;
     }
@@ -80,5 +86,10 @@ public class MapHelper {
                instance = new MapHelper();
            }
        return instance;
+    }
+
+    public void setNewZoomLevel(float newZoomLevel) {
+        this.newZoomLevel = newZoomLevel;
+        mDrawRoad.setNewZoomLevel(newZoomLevel);
     }
 }

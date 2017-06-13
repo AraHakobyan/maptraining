@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private StackOverFlow fragmentStackOverFlow;
     private DrawerLayout drawer;
     FrameLayout frameLayout;
+    FrameLayout container;
 
     public FloatingActionButton getFab() {
         return fab;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
+        container = (FrameLayout) findViewById(R.id.fragment_map_container);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                        .setAction("Action", null).show();
 
 
-//                FabTransformation.with(fab).duration(100).setOverlay(overLayView).transformTo(frameLayout);
-//                isFabShow = false;
+                FabTransformation.with(fab).duration(100).setOverlay(overLayView).transformTo(frameLayout);
+                isFabShow = false;
 
-           animateHideFab();
+//           animateHideFab();
 
 
 
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentMindMap = FragmentMindMap.getInstance();
         fragmentStackOverFlow = StackOverFlow.getInstance();
         fragmentStackOverFlow.setContext(getApplicationContext());
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map_container, fragmentLayerdMap).commit();
+        getSupportFragmentManager().beginTransaction().replace(container.getId(), fragmentLayerdMap).commit();
 
         Display display = getWindowManager().getDefaultDisplay();
         Point point = new Point();
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (X < 0) X = 0;
         if(Y < 0) Y = 0;
         if( X + fab.getWidth() > width) X = width - fab.getWidth();
-        if(Y + fab.getHeight() > height) Y = height - fab.getHeight();
+        if(Y + fab.getHeight() > container.getHeight()) Y = container.getHeight() - fab.getHeight();
         Log.d("XY",  "X : " + String.valueOf(X) + " Y : " + String.valueOf(Y) + " " + width + " " + height );
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
@@ -208,10 +210,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if(X > width / 2) {
 //                    animations.fabAnimate(fab,false,fab.getWidth() ,Y);
-                    animatePixels(X,width - fab.getWidth() - a,Y,height - fab.getHeight() - a);
+                    animatePixels(X,width - fab.getWidth() - a,Y,container.getHeight()  - a);
                 } else {
 //                    animations.fabAnimate(fab,false, a,Y);
-                    animatePixels(X,a,Y,height - fab.getHeight() - a);
+                    animatePixels(X,a,Y,container.getHeight()  - a);
                 }
 
 

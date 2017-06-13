@@ -85,6 +85,8 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         });
 
 
+
+
     }
 
 
@@ -97,6 +99,12 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
         MapHelper.getInstance().setMap(googleMap);
         MapHelper.getInstance().setActivity(getActivity());
 
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                MapHelper.getInstance().setNewZoomLevel(cameraPosition.zoom);
+            }
+        });
         googleMap.setOnMapClickListener(this);
         googleMap.setOnMapLongClickListener(this);
         LatLng sydney = new LatLng(40.1792, 44.4991);
@@ -131,14 +139,14 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
 
 
         Log.d("clicked1","latitude " + latLng.latitude + " longitude " + latLng.longitude);
-        cameraPosition = new CameraPosition.Builder()
-                .target(latLng)
-                .zoom(10)
+//        cameraPosition = new CameraPosition.Builder()
+//                .target(latLng)
+//                .zoom(10)
 //                .bearing(90)
 //                .tilt(30)
-                .build();
+//                .build();
 
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         MapHelper.getInstance().animateRoad(true);
         MapHelper.getInstance().drawRoad(latLng);
@@ -168,7 +176,6 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     public void onMapLongClick(LatLng latLng) {
         MapHelper.getInstance().removeHandlers();
         MapHelper.getInstance().removePolyline();
-
 
     }
 

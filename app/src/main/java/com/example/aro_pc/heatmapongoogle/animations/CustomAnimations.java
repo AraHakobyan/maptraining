@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class CustomAnimations {
 
+
     public CustomAnimations() {
     }
 
