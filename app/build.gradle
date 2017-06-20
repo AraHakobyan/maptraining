@@ -43,7 +43,9 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.akexorcist:googledirectionlibrary:1.0.5'
-    compile project(path: ':mylibrary')
+    compile 'arow.animhelper.lib:animationhelperlibrary:0.1.7'
+
+
 }
 repositories {
     mavenCentral()

@@ -5,7 +5,6 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
@@ -37,8 +36,8 @@ public class RoadAnimation {
     ArrayList<LatLng> addAllDotsToRoad1, addAllDotsToRoad2;
     ArrayList<LatLng> dotArray1, dotArray2;
 
-    final int PATTERN_DASH_LENGTH_PX = 5;
-    final int PATTERN_GAP_LENGTH_PX = 5;
+    final int PATTERN_DASH_LENGTH_PX = 20;
+    final int PATTERN_GAP_LENGTH_PX = 20;
     final PatternItem DOT = new Dot();
     final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
     final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
@@ -101,7 +100,7 @@ public class RoadAnimation {
         animToRoad.start();
 
         animRoad = animateRoad(road);
-        animRoad.start();
+//        animRoad.start();
 
     }
 
@@ -124,30 +123,30 @@ public class RoadAnimation {
 
     public AnimatorSet animateRoad(final ArrayList<LatLng> road) {
 
-        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLACK);
+        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLACK).addAll(road);
         final Polyline roadPolyline = googleMap.addPolyline(options);
 
 
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
-        valueAnimator.setDuration(1500);
-        valueAnimator.setInterpolator(new FastOutLinearInInterpolator());
-        final ArrayList<LatLng> arr = new ArrayList<>();
+//        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
+//        valueAnimator.setDuration(1500);
+//        valueAnimator.setInterpolator(new FastOutLinearInInterpolator());
+//        final ArrayList<LatLng> arr = new ArrayList<>();
 
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                List<LatLng> foregroundPoints = road;
+//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                List<LatLng> foregroundPoints = road;
 
-                int percentageValue = (int) animation.getAnimatedValue();
-                int pointcount = foregroundPoints.size();
-                int countTobeRemoved = (int) (pointcount * (percentageValue / 100.0f));
-                List<LatLng> subListTobeRemoved = foregroundPoints.subList(0, countTobeRemoved);
-                for (LatLng la : subListTobeRemoved)
-                    arr.add(la);
-                roadPolyline.setPoints(arr);
-                subListTobeRemoved.clear();
-            }
-        });
+//                int percentageValue = (int) animation.getAnimatedValue();
+//                int pointcount = foregroundPoints.size();
+//                int countTobeRemoved = (int) (pointcount * (percentageValue / 100.0f));
+//                List<LatLng> subListTobeRemoved = foregroundPoints.subList(0, countTobeRemoved);
+//                for (LatLng la : subListTobeRemoved)
+//                    arr.add(la);
+//                roadPolyline.setPoints(arr);
+//                subListTobeRemoved.clear();
+//            }
+//        });
 
         final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.GRAY, Color.BLACK);
         colorAnimation.setInterpolator(new AccelerateInterpolator());
@@ -160,7 +159,20 @@ public class RoadAnimation {
             }
 
         });
-        colorAnimation.addListener(new Animator.AnimatorListener() {
+        colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimation.setRepeatCount(ValueAnimator.INFINITE);
+
+        final ValueAnimator startColorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), Color.BLACK, Color.GRAY);
+        startColorAnim.setInterpolator(new AccelerateInterpolator());
+        startColorAnim.setDuration(1500);
+        startColorAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                roadPolyline.setColor((int) animation.getAnimatedValue());
+
+            }
+        });
+        startColorAnim.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -169,6 +181,7 @@ public class RoadAnimation {
             @Override
             public void onAnimationEnd(Animator animation) {
 
+                colorAnimation.start();
             }
 
             @Override
@@ -181,12 +194,13 @@ public class RoadAnimation {
 
             }
         });
-        colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
-        colorAnimation.setRepeatCount(ValueAnimator.INFINITE);
+        startColorAnim.start();
+
+
 
 
         AnimatorSet roadAnimator = new AnimatorSet();
-        roadAnimator.playTogether(valueAnimator,colorAnimation);
+//        roadAnimator.playTogether(valueAnimator);
         return roadAnimator;
     }
 
@@ -197,7 +211,7 @@ public class RoadAnimation {
         deltaDotsToShow1 = new ArrayList<>();
 
 
-        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLUE).pattern(PATTERN_POLYGON_ALPHA1);
+        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLACK).pattern(PATTERN_POLYGON_ALPHA1);
         final Polyline dotPolyline = googleMap.addPolyline(options);
 
         int removeFrom = 19;
@@ -311,7 +325,7 @@ public class RoadAnimation {
         deltaDotsToShow2 = new ArrayList<>();
 
 
-        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLUE).pattern(PATTERN_POLYGON_ALPHA2);
+        PolylineOptions options = new PolylineOptions().width(10).zIndex(10).color(Color.BLACK).pattern(PATTERN_POLYGON_ALPHA2);
         final Polyline dotPolyline = googleMap.addPolyline(options);
         dotPolyline.setPoints(endCurvedPoints);
 //
@@ -462,6 +476,10 @@ public class RoadAnimation {
 
 
         return latLngs;
+    }
+
+    private void newAnimRoad(){
+
     }
 
 }

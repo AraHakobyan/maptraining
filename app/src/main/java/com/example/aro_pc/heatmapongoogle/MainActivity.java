@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,22 +30,23 @@ import com.example.aro_pc.heatmapongoogle.animations.CustomAnimations;
 import com.example.aro_pc.heatmapongoogle.background.BackgroundMainActivity;
 import com.example.aro_pc.heatmapongoogle.fragments.FragmentGoogleMap;
 import com.example.aro_pc.heatmapongoogle.fragments.FragmentLayerdMap;
-import com.example.aro_pc.heatmapongoogle.fragments.FragmentMindMap;
+import com.example.aro_pc.heatmapongoogle.fragments.FragmentArowLib;
 import com.example.aro_pc.heatmapongoogle.stackoverflow.StackOverFlow;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.konifar.fab_transformation.FabTransformation;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnTouchListener{
 
-
     private FragmentGoogleMap fragmentGoogleMap;
     private FragmentLayerdMap fragmentLayerdMap;
-    private FragmentMindMap fragmentMindMap;
+    private FragmentArowLib fragmentMindMap;
     private FragmentManager fragmentManager;
     private StackOverFlow fragmentStackOverFlow;
     private DrawerLayout drawer;
     FrameLayout frameLayout;
     FrameLayout container;
+    private FrameLayout slideFab;
+
 
     public FloatingActionButton getFab() {
         return fab;
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     View overLayView;
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.options_menu,menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        slideFab = (FrameLayout) findViewById(R.id.slide_fab);
+        slideFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("slideFab", "it is visible ");
+            }
+        });
+        slideFab.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getSupportFragmentManager();
         fragmentGoogleMap = FragmentGoogleMap.getInstance();
         fragmentLayerdMap = FragmentLayerdMap.getInstance();
-        fragmentMindMap = FragmentMindMap.getInstance();
+        fragmentMindMap = FragmentArowLib.getInstance();
         fragmentStackOverFlow = StackOverFlow.getInstance();
         fragmentStackOverFlow.setContext(getApplicationContext());
         getSupportFragmentManager().beginTransaction().replace(container.getId(), fragmentLayerdMap).commit();

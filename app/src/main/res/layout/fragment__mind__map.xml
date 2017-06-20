@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.aro_pc.heatmapongoogle.fragments.FragmentMindMap">
+    tools:context="com.example.aro_pc.heatmapongoogle.fragments.FragmentArowLib">
 
     <!-- TODO: Update blank fragment layout -->
 <com.google.android.gms.maps.MapView
@@ -11,5 +11,7 @@
     android:layout_height="match_parent">
 
 </com.google.android.gms.maps.MapView>
+
+
 
 </FrameLayout>

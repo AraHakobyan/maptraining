@@ -22,6 +22,11 @@ import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.example.animationhelperlibrary.ColorAnimation;
+import com.example.animationhelperlibrary.DrawPolylineAnimation;
+import com.example.animationhelperlibrary.roadhelper.RoadHelper;
+import com.example.animationhelperlibrary.roadhelper.RoadInfo;
+import com.example.animationhelperlibrary.roadhelper.RoadIsReadyListener;
 import com.example.aro_pc.heatmapongoogle.Consts;
 import com.example.aro_pc.heatmapongoogle.R;
 import com.example.aro_pc.heatmapongoogle.animations.RoadAnimation;
@@ -30,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.GroundOverlay;
@@ -56,11 +62,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.aro_pc.heatmapongoogle.Consts.ABOVYAN_KINO;
+import static com.example.aro_pc.heatmapongoogle.Consts.CHARENTSAVAN_KINO;
+import static com.example.aro_pc.heatmapongoogle.Consts.YEREVAN_KENTRON;
+
 /**
  * Created by Aro-PC on 6/2/2017.
  */
 
-public class DrawRoad {
+public class DrawRoad implements RoadIsReadyListener {
 
     private boolean isAnimatedRoad = false;
     private boolean isAnimatedMarker = false;
@@ -69,6 +79,11 @@ public class DrawRoad {
     LatLng startPos;
     LatLng endPos;
     private float lastZoomLevel = 0;
+    private int animationTipe;
+
+    public void setAnimationTipe(int animationTipe) {
+        this.animationTipe = animationTipe;
+    }
 
     public GoogleMap getGoogleMap() {
         return googleMap;
@@ -204,6 +219,32 @@ public class DrawRoad {
         }
     }
 
+    private AnimatorSet animatorSet;
+    private RoadInfo roadInfo;
+
+    @Override
+    public void getRoad(RoadInfo roadInfo) {
+        this.roadInfo = roadInfo;
+        lineForLib.setPoints(roadInfo.getRoadPoints());
+        ColorAnimation colorAnimation = new ColorAnimation();
+        colorAnimation.addPolyline(lineForLib);
+        ValueAnimator colorAnimator = colorAnimation.getStartColorAnim();
+        DrawPolylineAnimation drawPolylineAnimation = new DrawPolylineAnimation();
+        drawPolylineAnimation.setPolyline(lineForLib);
+        ValueAnimator drawAnim = drawPolylineAnimation.getDrawAnim();
+        if (animatorSet == null) {
+            animatorSet = new AnimatorSet();
+        } else {
+            animatorSet.removeAllListeners();
+            animatorSet.end();
+            animatorSet.cancel();
+
+            animatorSet = new AnimatorSet();
+        }
+        animatorSet.playSequentially(drawAnim, colorAnimator);
+        animatorSet.start();
+    }
+
 
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -290,17 +331,8 @@ public class DrawRoad {
 
 //            Log.d(Consts.LOG_MAP_HELPER, String.valueOf(points.size()));
 
-            if (isAnimatedRoad && !isAnimatedMarker) {
-                animatedRoad(points, 1);
+                animatedRoad(points, animationTipe);
 
-            } else if (isAnimatedRoad && isAnimatedMarker) {
-
-                animatedRoad(points, 2);
-            } else if (!isAnimatedMarker && !isAnimatedRoad) {
-
-                animatedRoad(points, 0);
-
-            }
         }
     }
 
@@ -328,15 +360,23 @@ public class DrawRoad {
 
     private String strColor = "#95000000";
     boolean t = true;
+    Polyline p;
+    Polyline lineForLib;
 
     public void animatedRoad(final ArrayList<LatLng> points, int c) {
-        c = 6;
+        c = 8;
         // ArrayList<ArrayList<LatLng>> matric = divArray(points);
 
         LatLngBounds.Builder builder1 = new LatLngBounds.Builder();
         builder1.include(points.get(0));
         builder1.include(points.get(points.size() - 1));
         LatLngBounds bounds1 = builder1.build();
+
+        PolylineOptions lineOptions11 = new PolylineOptions();
+        lineOptions11.addAll(points);
+        lineOptions11.width(6);
+        lineOptions11.color(Color.RED);
+         p = googleMap.addPolyline(lineOptions11);
 
         final int deltaLength = calculateAnimateTime(points.size());
 
@@ -534,6 +574,23 @@ public class DrawRoad {
 
             case 6:
                 RoadAnimation roadAnimation = new RoadAnimation(googleMap,this.startPos,this.endPos, points);
+                break;
+            case 7:
+                //nearest road
+                NearestRoad nearestRoad = new NearestRoad(this.startPos, this.endPos, googleMap);
+                nearestRoad.setGGDistance(35000);
+                break;
+            case 8:
+                //with my custom library
+                //compile 'arow.animhelper.lib:animationhelperlibrary:0.1.7'
+
+                lineForLib = googleMap.addPolyline(new PolylineOptions()
+                        .width(15)
+                        .color(Color.BLACK));
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(ABOVYAN_KINO, 10, 10, 10)));
+
+                RoadHelper.getInstance().setPoints(YEREVAN_KENTRON, ABOVYAN_KINO, CHARENTSAVAN_KINO).addRoadIsReadyListener(this);
+
                 break;
 
         }

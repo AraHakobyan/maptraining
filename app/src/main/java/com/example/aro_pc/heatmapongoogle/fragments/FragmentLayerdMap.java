@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,40 @@ public class FragmentLayerdMap extends Fragment implements OnMapReadyCallback, G
     private HeatmapTileProvider mProvider;
     private TileOverlay tileOverlay;
     private ArrayList<LatLng> markerPoints;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.item1:
+//                MapHelper.getInstance().setAnimType(1);
+//                return true;
+//            case R.id.item2:
+//                MapHelper.getInstance().setAnimType(2);
+
+//                return true;
+//            case R.id.item3:
+//                MapHelper.getInstance().setAnimType(3);
+
+//                return true;
+//            case R.id.item4:
+//                MapHelper.getInstance().setAnimType(4);
+
+//                return true;
+//            case R.id.item5:
+//                MapHelper.getInstance().setAnimType(5);
+
+//                return true;
+//            case R.id.item6:
+//                MapHelper.getInstance().setAnimType(6
+
+//                );
+
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private CameraPosition cameraPosition;
 
 

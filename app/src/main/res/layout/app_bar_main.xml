@@ -43,6 +43,13 @@
         app:rippleColor="@color/grey_400"
         app:srcCompat="@drawable/ic_add_white_24dp"/>
 
+    <FrameLayout
+        android:id="@+id/slide_fab"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom|start"
+        android:visibility="visible" />
+
     <io.codetail.widget.RevealFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
